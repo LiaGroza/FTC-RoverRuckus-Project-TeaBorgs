@@ -54,7 +54,7 @@ public class testAutonom1 extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-    robotAutonom robot = new robotAutonom();
+    definitieRobot robot = new definitieRobot();
 
     @Override
     public void runOpMode() {
@@ -67,19 +67,34 @@ public class testAutonom1 extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        /*robot.move_front(0.5, 1000);
+        sleep(1000);
+        robot.resetDrives();
+        robot.move_back(0.5, 1000);
+        sleep(1000);
+        robot.resetDrives();
+        robot.move_left(0.5, 1000);
+        sleep(1000);
+        robot.resetDrives();
+        robot.move_right(0.5, 1000);
+        sleep(1000);
+        robot.resetDrives();
+        robot.rotate_left(0.5, 1000);
+        sleep(1000);
+        robot.resetDrives();
+        robot.rotate_right(0.5, 1000);
+        sleep(1000);
+        robot.resetDrives();*/
 
-            runtime.reset();
-            robot.latchingLeft.setPower(0.25);
-            robot.latchingRight.setPower(0.25);
+        robot.latchingLeft.setPower(0.25);
+        robot.latchingRight.setPower(0.25);
 
-            while (runtime.seconds() < 0.8) ;
+        while (runtime.seconds() < 0.8) ;
 
 
-            robot.lockLeft.setPosition(0.0);
-            robot.lockRight.setPosition(1.0);
-            while (runtime.seconds() < 1.2) ;
+        robot.lockLeft.setPosition(0.0);
+        robot.lockRight.setPosition(1.0);
+        while (runtime.seconds() < 1.2) ;
             /*robot.latchingLeft.setPower(0.1);
             robot.latchingRight.setPower(0.1);
             if(runtime.seconds()==3)
@@ -87,16 +102,19 @@ public class testAutonom1 extends LinearOpMode {
                 robot.latchingLeft.setPower(0.0);
                 robot.latchingRight.setPower(0.0);
             }*/
-            runtime.reset();
-            while (runtime.seconds() < 0.75) {
-                robot.latchingLeft.setPower(0.0001);
-                robot.latchingRight.setPower(0.0001);
-            }
-            while (runtime.seconds() < 3.0) {
-                robot.latchingLeft.setPower(0.0);
-                robot.latchingRight.setPower(0.0);
-            }
+        runtime.reset();
+        while (runtime.seconds() < 0.75) {
+            robot.latchingLeft.setPower(0.0001);
+            robot.latchingRight.setPower(0.0001);
+        }
+        while (runtime.seconds() < 3.0) {
+            robot.latchingLeft.setPower(0.0);
+            robot.latchingRight.setPower(0.0);
+        }
 
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+            runtime.reset();
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
