@@ -34,28 +34,27 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class definitieRobot
-{
+public class definitieRobot {
     /* Public OpMode members. */
-    public DcMotor frontLeft    = null;
-    public DcMotor frontRight   = null;
-    public DcMotor backLeft     = null;
-    public DcMotor backRight    = null;
+    public DcMotor frontLeft = null;
+    public DcMotor frontRight = null;
+    public DcMotor backLeft = null;
+    public DcMotor backRight = null;
     public DcMotor latchingLeft = null;
     public DcMotor latchingRight = null;
     public DcMotor cup = null;
 
-    public Servo lockLeft    = null;
-    public Servo lockRight    = null;
-    public Servo marker    = null;
+    public Servo lockLeft = null;
+    public Servo lockRight = null;
+    public Servo marker = null;
     //////////////////////////////////////////////////////
 
     /* local OpMode members. */
-    public static HardwareMap hwMap ;
-    private ElapsedTime period  = new ElapsedTime();
+    public static HardwareMap hwMap;
+    private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
-    public definitieRobot(){
+    public definitieRobot() {
 
     }
 
@@ -65,16 +64,15 @@ public class definitieRobot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        frontLeft  = hwMap.get(DcMotor.class, "fl_motor");
-        frontRight  = hwMap.get(DcMotor.class, "fr_motor");
-        backLeft  = hwMap.get(DcMotor.class, "bl_motor");
+        frontLeft = hwMap.get(DcMotor.class, "fl_motor");
+        frontRight = hwMap.get(DcMotor.class, "fr_motor");
+        backLeft = hwMap.get(DcMotor.class, "bl_motor");
         backRight = hwMap.get(DcMotor.class, "br_motor");
-        latchingLeft  = hwMap.get(DcMotor.class, "latching_left");
-        latchingRight  = hwMap.get(DcMotor.class, "latching_right");
-        cup  = hwMap.get(DcMotor.class, "rotating_cup");
-        lockLeft  = hwMap.get(Servo.class, "left_servo");
-        lockRight  = hwMap.get(Servo.class, "right_servo");
-
+        latchingLeft = hwMap.get(DcMotor.class, "latching_left");
+        latchingRight = hwMap.get(DcMotor.class, "latching_right");
+        cup = hwMap.get(DcMotor.class, "rotating_cup");
+        lockLeft = hwMap.get(Servo.class, "left_servo");
+        lockRight = hwMap.get(Servo.class, "right_servo");
 
 
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -86,8 +84,6 @@ public class definitieRobot
         cup.setDirection(DcMotor.Direction.FORWARD);
 
 
-
-
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
@@ -96,5 +92,60 @@ public class definitieRobot
         //rightClaw = hwMap.get(Servo.class, "right_hand");
 
     }
- }
 
+    void move_front(double power, long time)
+    {
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
+    }
+
+    void move_back(double power, long time)
+    {
+        frontLeft.setPower(-power);
+        frontRight.setPower(-power);
+        backLeft.setPower(-power);
+        backRight.setPower(-power);
+    }
+
+    void move_right(double power, long time)
+    {
+        frontLeft.setPower(-power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(-power);
+    }
+
+    void rotate_left(double power, long time)
+    {
+        frontLeft.setPower(-power);
+        frontRight.setPower(power);
+        backLeft.setPower(-power);
+        backRight.setPower(power);
+    }
+
+    void rotate_right(double power, long time)
+    {
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(power);
+        backRight.setPower(-power);
+    }
+
+    void move_left(double power, long time)
+    {
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(-power);
+        backRight.setPower(power);
+    }
+
+    void resetDrives()
+    {
+        frontLeft.setPower(0.0);
+        frontRight.setPower(0.0);
+        backLeft.setPower(0.0);
+        backRight.setPower(0.0);
+    }
+}
