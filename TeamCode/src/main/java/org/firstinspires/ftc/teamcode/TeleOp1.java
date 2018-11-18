@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -44,11 +46,22 @@ public class TeleOp1 extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
-
+    //omni
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
+
+    //latching motors
+    private DcMotor latchingRight;
+    private DcMotor latchingLeft;
+
+    //closing servos
+    private Servo rightServo;
+    private Servo leftServo;
+
+    //cup motor
+    private DcMotor rotatingCupMotor;
 
 
 
@@ -57,20 +70,35 @@ public class TeleOp1 extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
+
         frontLeft  = hardwareMap.get(DcMotor.class, "fl_motor");
         frontRight  = hardwareMap.get(DcMotor.class, "fr_motor");
         backLeft  = hardwareMap.get(DcMotor.class, "bl_motor");
         backRight  = hardwareMap.get(DcMotor.class, "br_motor");
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
+        latchingRight = hardwareMap.get(DcMotor.class, "latching_right");
+        latchingLeft = hardwareMap.get(DcMotor.class, "latching_left");
+
+        rightServo = hardwareMap.get(Servo.class, "right_servo");
+        leftServo = hardwareMap.get(Servo.class, "left_servo");
+
+        rotatingCupMotor = hardwareMap.get(DcMotor.class, "rotating_cup");
+
+
+
+
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.REVERSE);
+
+        latchingRight.setDirection(DcMotor.Direction.FORWARD);
+        latchingLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        rotatingCupMotor.setDirection(DcMotor.Direction.FORWARD);
+
+
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -79,9 +107,11 @@ public class TeleOp1 extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+
+            //omni
             double gamepadLeftY  = -gamepad1.left_stick_y;
             double gamepadLeftX  = gamepad1.left_stick_x;
-            double gamepadRightX = gamepad1.right_stick_x;
+            double gamepadRightX = -gamepad1.right_stick_x;
 
             double powerFrontLeft = -gamepadLeftY - gamepadLeftX - gamepadRightX;
             double powerFrontRight = gamepadLeftY - gamepadLeftX - gamepadRightX;
@@ -98,6 +128,68 @@ public class TeleOp1 extends LinearOpMode {
             frontRight.setPower(powerFrontRight);
             backLeft.setPower(powerBackLeft);
             backRight.setPower(powerBackRight);
+            //omni
+
+
+
+            //LATCHING - ridicare & coborare
+            double upLatch = gamepad1.right_trigger;
+            double downLatch = gamepad1.left_trigger;
+
+            if (upLatch != 0.0) {
+                latchingRight.setPower(1.0);
+                latchingLeft.setPower(1.0);
+            } else {
+                latchingRight.setPower(0.0);
+                latchingLeft.setPower(0.0);
+            }
+
+            if (downLatch != 0.0) {
+                latchingRight.setPower(-0.5);
+                latchingLeft.setPower(-0.5);
+            } else {
+                latchingRight.setPower(0.0);
+                latchingLeft.setPower(0.0);
+            }
+            //LATCHING - ridicare & coborare
+
+
+
+            //LOCKING & UNLOCKING
+            boolean upLock = gamepad1.right_bumper;
+            boolean downLock = gamepad1.left_bumper;
+
+            if (upLock) {
+                rightServo.setPosition(0.0);
+                leftServo.setPosition(1.0);
+            }
+
+            if (downLock) {
+                rightServo.setPosition(1.0);
+                leftServo.setPosition(0.0);
+            }
+            //LOCKING & UNLOCKING
+
+
+
+            //ROTATING CUP
+            boolean upCup = gamepad1.dpad_up;
+            boolean downCup = gamepad1.dpad_down;
+
+            if (upCup) {
+                rotatingCupMotor.setPower(0.5);
+            } else {
+                rotatingCupMotor.setPower(0.0);
+            }
+
+            if (downCup) {
+                rotatingCupMotor.setPower(-0.5);
+            } else {
+                rotatingCupMotor.setPower(0.0);
+            }
+            //ROTATING CUP
+
+
 
 
             // Show the elapsed game time and wheel power.
