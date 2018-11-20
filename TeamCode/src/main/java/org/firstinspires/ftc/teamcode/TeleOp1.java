@@ -44,7 +44,7 @@ import com.qualcomm.robotcore.util.Range;
 public class TeleOp1 extends LinearOpMode {
 
     // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime rtLock = new ElapsedTime();
 
     //omni
     public DcMotor frontLeft;
@@ -53,12 +53,12 @@ public class TeleOp1 extends LinearOpMode {
     public DcMotor backRight;
 
     //latching motors
-    private DcMotor latchingRight;
-    private DcMotor latchingLeft;
+    public DcMotor latchingRight;
+    public DcMotor latchingLeft;
 
     //closing servos
-    private Servo rightServo;
-    private Servo leftServo;
+    public Servo rightServo;
+    public Servo leftServo;
 
     //cup motor
     private DcMotor rotatingCupMotor;
@@ -93,36 +93,54 @@ public class TeleOp1 extends LinearOpMode {
         backRight.setDirection(DcMotor.Direction.REVERSE);
 
         latchingRight.setDirection(DcMotor.Direction.FORWARD);
-        latchingLeft.setDirection(DcMotor.Direction.REVERSE);
+        latchingLeft.setDirection(DcMotor.Direction.FORWARD);
 
         rotatingCupMotor.setDirection(DcMotor.Direction.FORWARD);
 
 
-
+        boolean locked = false;
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        runtime.reset();
 
+        rtLock.reset();
+
+
+        double  omniSurpress = 0.3;
+        double  cupSupress   = 0.2;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
 
             //omni
-            double gamepadLeftY  = -gamepad1.left_stick_y;
-            double gamepadLeftX  = gamepad1.left_stick_x;
-            double gamepadRightX = -gamepad1.right_stick_x;
+            double gamepadLeftY = -gamepad2.left_stick_y;
+            double gamepadLeftX = -gamepad2.left_stick_x;
+            double gamepadRightX = gamepad2.right_stick_x;
 
             double powerFrontLeft = -gamepadLeftY - gamepadLeftX - gamepadRightX;
             double powerFrontRight = gamepadLeftY - gamepadLeftX - gamepadRightX;
-            double powerBackLeft = -gamepadLeftY +gamepadLeftX - gamepadRightX;
-            double powerBackRight =  gamepadLeftY + gamepadLeftX - gamepadRightX;
+            double powerBackLeft = -gamepadLeftY + gamepadLeftX - gamepadRightX;
+            double powerBackRight = gamepadLeftY + gamepadLeftX - gamepadRightX;
 
+            double powerLatchingUp = -gamepad1.right_trigger;
+            double powerLatchingDown = gamepad1.left_trigger;
 
             powerFrontLeft = Range.clip(powerFrontLeft, -1, 1);
             powerFrontRight = Range.clip(powerFrontRight, -1, 1);
             powerBackLeft = Range.clip(powerBackLeft, -1, 1);
             powerBackRight = Range.clip(powerBackRight, -1, 1);
+            powerLatchingUp = Range.clip(powerLatchingUp, -1, 1);
+            powerLatchingDown = Range.clip(powerLatchingDown, -1, 1);
+
+
+
+            if (gamepad2.right_bumper == true) {
+                powerFrontLeft = powerFrontLeft *   omniSurpress;
+                powerBackLeft = powerBackLeft *     omniSurpress;
+                powerFrontRight = powerFrontRight * omniSurpress;
+                powerBackRight = powerBackRight *   omniSurpress;
+
+            }
 
             frontLeft.setPower(powerFrontLeft);
             frontRight.setPower(powerFrontRight);
@@ -131,69 +149,53 @@ public class TeleOp1 extends LinearOpMode {
             //omni
 
 
-
-            //LATCHING - ridicare & coborare
-            double upLatch = gamepad1.right_trigger;
-            double downLatch = gamepad1.left_trigger;
-
-            if (upLatch != 0.0) {
-                latchingRight.setPower(1.0);
-                latchingLeft.setPower(1.0);
-            } else {
-                latchingRight.setPower(0.0);
-                latchingLeft.setPower(0.0);
-            }
-
-            if (downLatch != 0.0) {
-                latchingRight.setPower(-0.5);
-                latchingLeft.setPower(-0.5);
-            } else {
-                latchingRight.setPower(0.0);
-                latchingLeft.setPower(0.0);
-            }
             //LATCHING - ridicare & coborare
 
+            latchingRight.setPower(powerLatchingUp);
+            latchingLeft.setPower(-powerLatchingUp);
+
+
+            latchingRight.setPower(powerLatchingDown);
+            latchingLeft.setPower(-powerLatchingDown);
 
 
             //LOCKING & UNLOCKING
-            boolean upLock = gamepad1.right_bumper;
-            boolean downLock = gamepad1.left_bumper;
 
-            if (upLock) {
-                rightServo.setPosition(0.0);
-                leftServo.setPosition(1.0);
+
+            if (gamepad2.left_bumper) {
+
+                if (rtLock.seconds() > 0.7) {
+
+                    if (locked) {
+                        rightServo.setPosition(1.0);
+                        leftServo.setPosition(0.0);
+                        locked = false;
+                    } else {
+                        rightServo.setPosition(0.0);
+                        leftServo.setPosition(1.0);
+                        locked = true;
+                    }
+                    rtLock.reset();
+                }
+
             }
-
-            if (downLock) {
-                rightServo.setPosition(1.0);
-                leftServo.setPosition(0.0);
-            }
-            //LOCKING & UNLOCKING
-
 
 
             //ROTATING CUP
-            boolean upCup = gamepad1.dpad_up;
-            boolean downCup = gamepad1.dpad_down;
+            double powerCup = gamepad1.right_stick_y;
 
-            if (upCup) {
-                rotatingCupMotor.setPower(0.5);
-            } else {
-                rotatingCupMotor.setPower(0.0);
+            powerCup = Range.clip(powerCup, -0.4, 0.4);
+
+            if (gamepad1.right_bumper == true) {
+
+                powerCup = powerCup * cupSupress;
             }
 
-            if (downCup) {
-                rotatingCupMotor.setPower(-0.5);
-            } else {
-                rotatingCupMotor.setPower(0.0);
-            }
-            //ROTATING CUP
-
-
+            rotatingCupMotor.setPower(powerCup);
 
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+          //  telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", powerFrontLeft, powerFrontRight);
             telemetry.update();
         }
