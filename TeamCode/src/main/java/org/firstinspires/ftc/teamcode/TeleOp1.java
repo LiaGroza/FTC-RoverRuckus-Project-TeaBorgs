@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -60,6 +61,8 @@ public class TeleOp1 extends LinearOpMode {
     public Servo rightServo;
     public Servo leftServo;
 
+    public CRServo servoCuva;
+
     //cup motor
     private DcMotor rotatingCupMotor;
 
@@ -83,6 +86,7 @@ public class TeleOp1 extends LinearOpMode {
         leftServo = hardwareMap.get(Servo.class, "left_servo");
 
         rotatingCupMotor = hardwareMap.get(DcMotor.class, "rotating_cup");
+        servoCuva       =hardwareMap.get(CRServo.class,"cup_servo");
 
 
 
@@ -113,9 +117,9 @@ public class TeleOp1 extends LinearOpMode {
 
 
             //omni
-            double gamepadLeftY = -gamepad2.left_stick_y;
-            double gamepadLeftX = -gamepad2.left_stick_x;
-            double gamepadRightX = gamepad2.right_stick_x;
+            double gamepadLeftY = -gamepad2.right_stick_y;
+            double gamepadLeftX = -gamepad2.right_stick_x;
+            double gamepadRightX = gamepad2.left_stick_x;
 
             double powerFrontLeft = -gamepadLeftY - gamepadLeftX - gamepadRightX;
             double powerFrontRight = gamepadLeftY - gamepadLeftX - gamepadRightX;
@@ -162,7 +166,7 @@ public class TeleOp1 extends LinearOpMode {
             //LOCKING & UNLOCKING
 
 
-            if (gamepad2.left_bumper) {
+            if (gamepad1.x) {
 
                 if (rtLock.seconds() > 0.7) {
 
@@ -181,6 +185,21 @@ public class TeleOp1 extends LinearOpMode {
             }
 
 
+            //CUP SERVO
+            //////////////////////////////////////////////
+
+            if(gamepad2.right_trigger != 0)
+            {
+                servoCuva.setPower(1);
+            }
+            else if(gamepad2.left_trigger != 0)
+            {
+                servoCuva.setPower(-1);
+            }
+            else servoCuva.setPower(0);
+
+
+            //////////////////////////////////////////////
             //ROTATING CUP
             double powerCup = gamepad1.right_stick_y;
 
