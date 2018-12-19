@@ -31,8 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -60,10 +60,13 @@ public class TeleOp1 extends LinearOpMode {
     public Servo rightServo;
     public Servo leftServo;
 
+    public CRServo servoCuva;
+
     //cup motor
     private DcMotor rotatingCupMotor;
 
-
+    //marker servo
+    private Servo markerServo;
 
     @Override
     public void runOpMode() {
@@ -83,9 +86,9 @@ public class TeleOp1 extends LinearOpMode {
         leftServo = hardwareMap.get(Servo.class, "left_servo");
 
         rotatingCupMotor = hardwareMap.get(DcMotor.class, "rotating_cup");
+        servoCuva       =hardwareMap.get(CRServo.class,"cup_servo");
 
-
-
+        markerServo = hardwareMap.get(Servo.class, "marker_servo");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -100,6 +103,9 @@ public class TeleOp1 extends LinearOpMode {
 
         boolean locked = false;
 
+        double servoInitPosition = 0.4;
+        markerServo.setPosition(servoInitPosition);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -110,12 +116,13 @@ public class TeleOp1 extends LinearOpMode {
         double  cupSupress   = 0.2;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-
+            rotatingCupMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //latchingRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            //latchingLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             //omni
-            double gamepadLeftY = -gamepad2.left_stick_y;
-            double gamepadLeftX = gamepad2.left_stick_x;
-            double gamepadRightX = -gamepad2.right_stick_x;
+            double gamepadLeftY = -gamepad2.right_stick_y;
+            double gamepadLeftX = -gamepad2.right_stick_x;
+            double gamepadRightX = -gamepad2.left_stick_x;
 
             double powerFrontLeft = -gamepadLeftY - gamepadLeftX - gamepadRightX;
             double powerFrontRight = gamepadLeftY - gamepadLeftX - gamepadRightX;
@@ -129,6 +136,7 @@ public class TeleOp1 extends LinearOpMode {
             powerFrontRight = Range.clip(powerFrontRight, -1, 1);
             powerBackLeft = Range.clip(powerBackLeft, -1, 1);
             powerBackRight = Range.clip(powerBackRight, -1, 1);
+
             powerLatchingUp = Range.clip(powerLatchingUp, -1, 1);
             powerLatchingDown = Range.clip(powerLatchingDown, -1, 1);
 
@@ -140,6 +148,12 @@ public class TeleOp1 extends LinearOpMode {
                 powerFrontRight = powerFrontRight * omniSurpress;
                 powerBackRight = powerBackRight *   omniSurpress;
 
+            }
+
+            if (gamepad1.left_bumper == true)
+            {
+                powerLatchingUp = powerLatchingUp * omniSurpress;
+                powerLatchingDown = powerLatchingDown * omniSurpress;
             }
 
             frontLeft.setPower(powerFrontLeft);
@@ -162,7 +176,7 @@ public class TeleOp1 extends LinearOpMode {
             //LOCKING & UNLOCKING
 
 
-            if (gamepad2.left_bumper) {
+            if (gamepad1.x) {
 
                 if (rtLock.seconds() > 0.7) {
 
@@ -181,6 +195,21 @@ public class TeleOp1 extends LinearOpMode {
             }
 
 
+            //CUP SERVO
+            //////////////////////////////////////////////
+
+            if(gamepad2.right_trigger != 0)
+            {
+                servoCuva.setPower(1);
+            }
+            else if(gamepad2.left_trigger != 0)
+            {
+                servoCuva.setPower(-1);
+            }
+            else servoCuva.setPower(0);
+
+
+            //////////////////////////////////////////////
             //ROTATING CUP
             double powerCup = gamepad1.right_stick_y;
 
@@ -195,7 +224,7 @@ public class TeleOp1 extends LinearOpMode {
 
 
             // Show the elapsed game time and wheel power.
-          //  telemetry.addData("Status", "Run Time: " + runtime.toString());
+            //  telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", powerFrontLeft, powerFrontRight);
             telemetry.update();
         }

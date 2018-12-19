@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -46,12 +47,13 @@ public class definitieRobot {
 
     public Servo lockLeft = null;
     public Servo lockRight = null;
-    public Servo marker = null;
+    public Servo markerServo = null;
     //////////////////////////////////////////////////////
 
     /* local OpMode members. */
     public static HardwareMap hwMap;
     private ElapsedTime period = new ElapsedTime();
+    private GoldAlignDetector detector;
 
     /* Constructor */
     public definitieRobot() {
@@ -73,6 +75,7 @@ public class definitieRobot {
         cup = hwMap.get(DcMotor.class, "rotating_cup");
         lockLeft = hwMap.get(Servo.class, "left_servo");
         lockRight = hwMap.get(Servo.class, "right_servo");
+        markerServo = hwMap.get(Servo.class, "marker_servo");
 
 
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -117,7 +120,39 @@ public class definitieRobot {
         backRight.setPower(-power);
     }
 
-    void rotate_left(double power, long time)
+    void move_left(double power, long time)
+    {
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(-power);
+        backRight.setPower(power);
+    }
+
+    void move_front_right(double power, long time)
+    {
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+    }
+
+    void move_front_left(double power, long time)
+    {
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+    }
+
+    void move_back_left(double power, long time)
+    {
+        frontRight.setPower(-power);
+        backLeft.setPower(-power);
+    }
+
+    void move_back_right(double power, long time)
+    {
+        frontLeft.setPower(-power);
+        backRight.setPower(-power);
+    }
+
+    void rotate_right(double power, long time)
     {
         frontLeft.setPower(-power);
         frontRight.setPower(power);
@@ -125,20 +160,12 @@ public class definitieRobot {
         backRight.setPower(power);
     }
 
-    void rotate_right(double power, long time)
+    void rotate_left(double power, long time)
     {
         frontLeft.setPower(power);
         frontRight.setPower(-power);
         backLeft.setPower(power);
         backRight.setPower(-power);
-    }
-
-    void move_left(double power, long time)
-    {
-        frontLeft.setPower(power);
-        frontRight.setPower(-power);
-        backLeft.setPower(-power);
-        backRight.setPower(power);
     }
 
     void resetDrives()

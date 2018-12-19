@@ -29,9 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.disnodeteam.dogecv.CameraViewDisplay;
-import com.disnodeteam.dogecv.DogeCV;
-import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -50,19 +47,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="testAutonom1", group="Linear Opmode")
+@Autonomous(name="testAutonom2", group="Linear Opmode")
 //@Disabled
-public class testAutonom1 extends LinearOpMode {
+public class testAutonom2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private GoldAlignDetector detector;
+
+    //private GoldAlignDetector detector;
 
     definitieRobot robot = new definitieRobot();
-
-    //ConceptTensorFlowObjectDetection detector = new ConceptTensorFlowObjectDetection();
-
-    int mineralResult = 0;
 
     @Override
     public void runOpMode() {
@@ -70,10 +64,11 @@ public class testAutonom1 extends LinearOpMode {
         telemetry.update();
 
         robot.init(hardwareMap);
-        robot.markerServo.setPosition(0.3);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+
         double servoInitPosition = 0.3;
         robot.markerServo.setPosition(servoInitPosition);
 
@@ -114,9 +109,9 @@ public class testAutonom1 extends LinearOpMode {
         robot.latchingLeft.setPower(0.0);
         robot.latchingRight.setPower(0.0);
 
-        /////////CASE 1 //////////
+        /////////CASE 2 //////////
 
-        // Set up detector
+        /*// Set up detector
         detector = new GoldAlignDetector(); // Create detector
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
         detector.useDefaults(); // Set detector to use default settings
@@ -135,9 +130,9 @@ public class testAutonom1 extends LinearOpMode {
 
         detector.enable(); // Start the detector!
         runtime.reset();
-        while (runtime.seconds()<1.0);
 
-        if (detector.getXPosition() >= 50 && detector.getXPosition() <= 360) {
+        if (detector.getXPosition() >= 50 && detector.getXPosition() <= 360) {*/
+           while (runtime.seconds()<0.25);
             runtime.reset();
             while (runtime.seconds() < 0.75) {
                 robot.move_back(0.5, 100);
@@ -164,46 +159,9 @@ public class testAutonom1 extends LinearOpMode {
                 robot.move_front_right(0.3, 100);
             }
             robot.resetDrives();
-            /*runtime.reset();
-            while (runtime.seconds() < 0.25) {
-                robot.move_front_left(0.3, 100);
-            }*/
-            robot.resetDrives();
-            runtime.reset();
-            while (runtime.seconds() < 0.85) {
-                robot.rotate_right(0.3, 100);
-            }
-            robot.resetDrives();
-        } else if (detector.getXPosition() > 360) {
-            runtime.reset();
-            while (runtime.seconds() < 0.75) {
-                robot.move_back(0.5, 100);
-            }
-            robot.resetDrives();
-            runtime.reset();
-            while (runtime.seconds() < 0.85) {
-                robot.rotate_left(0.3, 100);
-            }
-            robot.resetDrives();
-            runtime.reset();
-            while (runtime.seconds() < 1.0) {
-                robot.move_front_left(0.3, 100);
-            }
-            robot.resetDrives();
-            runtime.reset();
-            while (runtime.seconds() < 1.75) {
-                robot.move_back_left(0.3, 100);
-            }
-            robot.resetDrives();
-            //RETURN
-            runtime.reset();
-            while (runtime.seconds() < 1.75) {
-                robot.move_front_right(0.3, 100);
-            }
-            robot.resetDrives();
             runtime.reset();
             while (runtime.seconds() < 0.5) {
-                robot.move_back_right(0.3, 100);
+                robot.move_front_left(0.3, 100);
             }
             robot.resetDrives();
             runtime.reset();
@@ -211,6 +169,48 @@ public class testAutonom1 extends LinearOpMode {
                 robot.rotate_right(0.3, 100);
             }
             robot.resetDrives();
+        /*} else if (detector.getXPosition() > 360) {
+        runtime.reset();
+        while (runtime.seconds() < 0.75) {
+            robot.move_back(0.5, 100);
+        }
+        robot.resetDrives();
+        runtime.reset();
+        while (runtime.seconds() < 0.85) {
+            robot.rotate_left(0.3, 100);
+        }
+        robot.resetDrives();
+        runtime.reset();
+        while (runtime.seconds() < 1.0) {
+            robot.move_front_left(0.4, 100);
+        }
+        robot.resetDrives();
+        runtime.reset();
+        while (runtime.seconds() < 1.75) {
+            robot.move_back_left(0.3, 100);
+        }
+        robot.resetDrives();
+        //RETURN
+        runtime.reset();
+        while (runtime.seconds() < 1.75) {
+            robot.move_front_right(0.3, 100);
+        }
+        robot.resetDrives();
+        runtime.reset();
+        while (runtime.seconds() < 1.0) {
+            robot.move_back_right(0.4, 100);
+        }
+        robot.resetDrives();
+        runtime.reset();
+        while (runtime.seconds() < 0.85) {
+            robot.rotate_right(0.3, 100);
+        }
+        robot.resetDrives();
+        runtime.reset();
+        while (runtime.seconds() < 0.25) {
+            robot.move_right(0.5, 100);
+        }
+        robot.resetDrives();
         } else {
             runtime.reset();
             while (runtime.seconds() < 0.75) {
@@ -223,8 +223,8 @@ public class testAutonom1 extends LinearOpMode {
             }
             robot.resetDrives();
             runtime.reset();
-            while (runtime.seconds() < 1.5) {
-                robot.move_back_right(0.3, 100);
+            while (runtime.seconds() < 1.7) {
+                robot.move_back_right(0.45, 100);
             }
             robot.resetDrives();
             runtime.reset();
@@ -238,63 +238,51 @@ public class testAutonom1 extends LinearOpMode {
                 robot.move_front_right(0.3, 100);
             }
             robot.resetDrives();
-            /*runtime.reset();
-            while (runtime.seconds() < 1.5) {
-                robot.move_front_left(0.3, 100);
+            runtime.reset();
+            while (runtime.seconds() < 1.7) {
+                robot.move_front_left(0.45, 100);
             }
-            robot.resetDrives();*/
+            robot.resetDrives();
             runtime.reset();
             while (runtime.seconds() < 0.75) {
                 robot.rotate_right(0.3, 100);
             }
             robot.resetDrives();
-        }
-
+        }*/
 
         ////////////MARKER
         runtime.reset();
+        while(runtime.seconds() < 2.40)
+        {
+            robot.move_right(0.6, 100);
+        }
+
+        runtime.reset();
         while(runtime.seconds() < 0.75)
-        {
-            robot.move_back(0.5, 100);
-        }
-
-        runtime.reset();
-        while(runtime.seconds() < 2.5)
-        {
-            robot.rotate_left(0.4, 100);
-        }
-
-        runtime.reset();
-        while(runtime.seconds() < 2.55)
-        {
-            robot.move_left(0.5, 100);
-        }
-
-        runtime.reset();
-        while(runtime.seconds() < 1.1)
         {
             robot.rotate_left(0.3, 100);
         }
+        robot.resetDrives();
 
         runtime.reset();
         while(runtime.seconds() < 3.0)
         {
-            robot.move_left(0.5, 100);
+            robot.move_left(0.6, 100);
         }
         robot.resetDrives();
 
-        sleep(1000);
+        sleep(500);
 
         robot.markerServo.setPosition(1.0);
         sleep(1000);
 
         runtime.reset();
-        while(runtime.seconds() < 0.8)
+        while(runtime.seconds() < 1.2)
         {
             robot.move_right(0.3, 100);
         }
         robot.resetDrives();
-        sleep(1000);
+        sleep(800);
         robot.markerServo.setPosition(0.3);
         /////////////////////////////////////////////////////////////////////
 
@@ -322,7 +310,7 @@ public class testAutonom1 extends LinearOpMode {
             runtime.reset();
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Mineral Result:", mineralResult);
+            //telemetry.addData("Pozitie: ", detector.getXPosition());
             //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
