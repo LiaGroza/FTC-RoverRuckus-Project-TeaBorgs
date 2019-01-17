@@ -63,10 +63,11 @@ public class TeleOp1 extends LinearOpMode {
     public CRServo servoCuva;
 
     //cup motor
-    private DcMotor rotatingCupMotor;
+    //
+    public DcMotor rotatingCupMotor;
 
     //marker servo
-    private Servo markerServo;
+    public Servo markerServo;
 
     @Override
     public void runOpMode() {
